@@ -1,0 +1,59 @@
+# DeepCall configuration
+mode: "synthetic"
+
+data:
+  synth_height: 64
+  synth_width: 32
+  synth_channels: 5
+  num_train_samples: 4000
+  num_val_samples: 800
+  num_test_samples: 800
+  window_size: 251
+  max_reads: 250
+  channels: 8
+  train_chroms: ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6",
+                 "chr7", "chr8", "chr9", "chr10", "chr11", "chr12",
+                 "chr13", "chr14", "chr15", "chr16", "chr17", "chr18",
+                 "chr19", "chr20"]
+  val_chrom: "chr21"
+  test_chrom: "chr22"
+  ref_sample_rate: 0.001
+  bam_file: "data/bams/NA12878.bam"
+  truth_vcf: "data/truth/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf"
+
+model:
+  architecture: "cnn"
+  in_channels: 5
+  num_classes: 4
+  num_classes_synthetic: 4
+  cnn:
+    base_filters: 64
+    blocks: 3
+  transformer:
+    d_model: 128
+    nhead: 8
+    num_layers: 4
+    dim_feedforward: 512
+    dropout: 0.1
+
+train:
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  epochs: 50
+  synthetic_epochs: 15
+  focal_loss: true
+  focal_gamma: 2.0
+  label_smoothing: 0.1
+  early_stopping_patience: 10
+  device: "auto"
+  seed: 42
+  checkpoint_dir: "saved_models"
+  log_every: 100
+
+evaluate:
+  threshold: 0.9
+  output_vcf: "predictions.vcf"
+  match_alleles: true
+
+output_dir: "output"
